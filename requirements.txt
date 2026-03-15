@@ -1,0 +1,10 @@
+# Reference Toolkit Dependencies
+
+# Core dependencies
+requests>=2.28.0
+bibtexparser>=1.4.0
+scholarly>=1.7.0
+
+# Additional dependencies used by the toolkit
+PyPDF2>=3.0.0
+lxml>=4.9.0

@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Claude Code
+.claude/
+
+# Test files and directories
+test_*/
+cyclamates_*/
+docker_test/
+*.log
+
+# Example/reference files (not core functionality)
+Cyclamates*.txt
+example-*.sh
+test_*.py
+vpn_*.py
+
+# Output files (not source code)
+refs_with_doi.csv
+unresolved_refs.csv
+low_confidence_refs.csv
+cyclamates_resolved.csv
+*_downloaded/
+*_enhanced/
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+
+# Docker
+docker_build.log
+*.log

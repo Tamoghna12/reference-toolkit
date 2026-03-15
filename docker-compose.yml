@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  reference-toolkit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: reference-toolkit:latest
+    container_name: reftool
+
+    # Environment variables
+    environment:
+      - PYTHONUNBUFFERED=1
+      - REFERENCE_TOOLKIT_EMAIL=benzoic@gmail.com
+      - REFERENCE_TOOLKIT_CONFIDENCE=60.0
+      - REFERENCE_TOOLKIT_TIMEOUT=30
+
+    # Volume mounts
+    # Mount current directory to /data in container
+    volumes:
+      - ./data:/data
+      - ./output:/output
+
+    # Working directory inside container
+    working_dir: /data
+
+    # Keep container running for interactive use
+    stdin_open: true
+    tty: true
+
+    # Default command (override with docker-compose run)
+    command: ["reftool", "--help"]
+
+    # Resource limits (optional)
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # Service for running specific commands
+  run:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: reference-toolkit:latest
+    container_name: reftool-run
+
+    environment:
+      - PYTHONUNBUFFERED=1
+      - REFERENCE_TOOLKIT_EMAIL=benzoic@gmail.com
+
+    volumes:
+      - ./data:/data
+      - ./output:/output
+
+    working_dir: /data
+
+    # Override with: docker-compose run run [command]
+    command: ["reftool", "--help"]
+
+# Named volumes for persistent data
+volumes:
+  data:
+  output:
