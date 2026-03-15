@@ -2,8 +2,10 @@
 
 [![Python](https://img.shields.io/badge/Python-3.10+-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Light-purple)](https://github.com/Tamoghna12/reference-toolkit)
+[![Docker](https://img.shields.io/badge/docker-supported-blue)](https://www.docker.com/)
 
-A comprehensive tool for discovering, validating, resolving, and downloading academic papers.
+A comprehensive tool for discovering, validating, resolving, and downloading academic papers with PDF batch renaming capabilities.
 
 ## Features
 
@@ -18,16 +20,33 @@ A comprehensive tool for discovering, validating, resolving, and downloading aca
 
 ## Installation
 
+### Quick Start (5 minutes)
+👉 **[Quick Start Reference](QUICK_START.md)** - Get up and running fast
+
+### Platform-Specific Guides
+👉 **[Full Installation Guide](INSTALL_GUIDE.md)** - Detailed instructions for:
+- **Windows** - Docker and native Python installation
+- **macOS** - Docker and native Python installation
+- **Linux** - Docker and native Python installation
+
+### Quick Install
+
+**From PyPI** (when available):
 ```bash
 pip install reference-toolkit
 ```
 
-Or from source:
-
+**From source**:
 ```bash
-git clone https://github.com/your-repo/reference-toolkit.git
+git clone https://github.com/Tamoghna12/reference-toolkit.git
 cd reference-toolkit
 pip install -e .
+```
+
+**Docker** (recommended for consistency):
+```bash
+docker build -t reference-toolkit:latest .
+docker run --rm -v $(PWD):/data reference-toolkit:latest reftool --help
 ```
 
 ## Quick Start
@@ -257,12 +276,19 @@ This tool respects API usage policies:
 
 ## Documentation
 
-- [PDF Renaming Guide](docs/PDF_RENAMING_GUIDE.md) - How to use the `rename` command
-- [Docker Usage](docs/DOCKER_USAGE.md) - Docker quick reference
-- [Enhanced Features](docs/ENHANCED_ACCESS_FEATURES.md) - Advanced PDF access features
-- [Future Enhancements](docs/FUTURE_ENHANCEMENTS.md) - Planned improvements
-- [Contributing](CONTRIBUTING.md) - How to contribute
-- [Changelog](CHANGELOG.md) - Version history
+### Installation & Setup
+- **[Quick Start](QUICK_START.md)** - Get up and running in 5 minutes
+- **[Installation Guide](INSTALL_GUIDE.md)** - Detailed platform-specific instructions
+- **[Docker Usage](docs/DOCKER_USAGE.md)** - Docker quick reference
+
+### Feature Guides
+- **[PDF Renaming Guide](docs/PDF_RENAMING_GUIDE.md)** - How to use the `rename` command
+- **[Enhanced Features](docs/ENHANCED_ACCESS_FEATURES.md)** - Advanced PDF access features
+- **[Future Enhancements](docs/FUTURE_ENHANCEMENTS.md)** - Planned improvements
+
+### Development
+- **[Contributing](CONTRIBUTING.md)** - How to contribute
+- **[Changelog](CHANGELOG.md)** - Version history
 
 ## Project Structure
 
