@@ -255,12 +255,66 @@ This tool respects API usage policies:
 1. **EndNote**: File → Import → Folder... → Select `pdfs/` → Import Option: PDF
 2. **Mendeley**: File → Add Files... → Select `pdfs/` folder
 
+## Documentation
+
+- [PDF Renaming Guide](docs/PDF_RENAMING_GUIDE.md) - How to use the `rename` command
+- [Docker Usage](docs/DOCKER_USAGE.md) - Docker quick reference
+- [Enhanced Features](docs/ENHANCED_ACCESS_FEATURES.md) - Advanced PDF access features
+- [Future Enhancements](docs/FUTURE_ENHANCEMENTS.md) - Planned improvements
+- [Contributing](CONTRIBUTING.md) - How to contribute
+- [Changelog](CHANGELOG.md) - Version history
+
+## Project Structure
+
+```
+reference-toolkit/
+├── src/reference_toolkit/    # Source code
+├── tests/                    # Test suite
+├── examples/                 # Example scripts
+├── docs/                     # Documentation
+├── .github/workflows/        # CI/CD
+├── Dockerfile                # Docker configuration
+├── pyproject.toml           # Project configuration
+└── requirements.txt         # Python dependencies
+```
+
+## Development
+
+### Running Tests
+
+```bash
+# Install development dependencies
+pip install -e ".[dev]"
+
+# Run tests
+pytest
+
+# Run with coverage
+pytest --cov=src/reference_toolkit
+```
+
+### Code Style
+
+```bash
+# Format code
+black src/ tests/
+
+# Sort imports
+isort src/ tests/
+
+# Lint
+flake8 src/ tests/
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed development guidelines.
+
 ## Dependencies
 
 - `requests` - HTTP requests
 - `bibtexparser` - BibTeX parsing
 - `scholarly` - Google Scholar access
+- `PyPDF2` - PDF metadata extraction
 
 ## License
 
-MIT License
+MIT License - see [LICENSE](LICENSE) file

@@ -1,8 +1,10 @@
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
+
+# Distribution / packaging
 .Python
 build/
 develop-eggs/
@@ -16,16 +18,43 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
 
-# Virtual environments
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Environments
+.env
+.venv
+env/
 venv/
 ENV/
-env/
-.venv
+env.bak/
+venv.bak/
 
 # IDE
 .vscode/
@@ -33,36 +62,57 @@ env/
 *.swp
 *.swo
 *~
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
 .DS_Store
 
 # Claude Code
 .claude/
 
-# Test files and directories
-test_*/
-cyclamates_*/
-docker_test/
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Logs
 *.log
+logs/
 
-# Example/reference files (not core functionality)
-Cyclamates*.txt
-example-*.sh
-test_*.py
-vpn_*.py
+# Data and output files (not source code)
+*.csv
+*.json
+*.bib
+*.ris
+data/
+output/
+results/
+pdfs/
 
-# Output files (not source code)
-refs_with_doi.csv
-unresolved_refs.csv
-low_confidence_refs.csv
-cyclamates_resolved.csv
-*_downloaded/
-*_enhanced/
+# Test fixtures and temporary files
+test_*/
+*_test/
+tmp/
+temp/
 
 # Build artifacts
 *.egg-info/
 dist/
 build/
+*.whl
 
 # Docker
 docker_build.log
-*.log
+.docker/
+
+# OS
+Thumbs.db
+.DS_Store
