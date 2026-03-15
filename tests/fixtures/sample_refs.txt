@@ -1,0 +1,13 @@
+Sample Reference List
+
+This is a sample reference file for testing the Reference Toolkit.
+
+1. Smith, J., Doe, J., and Johnson, A. (2023). "Machine learning approaches for protein structure prediction." Nature Methods, 20(3), 123-145. DOI: 10.1038/s41592-023-01000-0
+
+2. Brown, R., and Wilson, K. (2022). "CRISPR gene editing: Recent advances and clinical applications." Science, 376(6594), 789-795. DOI: 10.1126/science.abq1234
+
+3. Garcia, M., Lee, S., and Patel, R. (2024). "Deep learning for drug discovery: A comprehensive review." Journal of Chemical Information and Modeling, 64(2), 345-367.
+
+4. Chen, L., and Wang, H. (2023). "Applications of artificial intelligence in biomedical research." Lancet Digital Health, 5(4), e234-e245.
+
+5. Taylor, P., Anderson, K., and Martinez, D. (2021). "High-throughput screening methods for drug discovery." Bioorganic & Medicinal Chemistry, 29, 115987.
