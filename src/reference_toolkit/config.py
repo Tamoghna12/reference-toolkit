@@ -1,5 +1,7 @@
 """Configuration settings for the Reference Toolkit."""
 
+import os
+import re
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -23,15 +25,72 @@ class SearchSource(Enum):
     ALL = "all"
 
 
+def validate_email(email: str) -> bool:
+    """Validate email address format.
+
+    Args:
+        email: Email address to validate
+
+    Returns:
+        True if email format is valid, False otherwise
+    """
+    if not email:
+        return False
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return re.match(pattern, email) is not None
+
+
+def get_default_email() -> str:
+    """Get default email from environment variable.
+
+    Returns:
+        Email address from environment or empty string if not set
+
+    Raises:
+        ValueError: If email is set but invalid format
+    """
+    email = os.getenv('REFERENCETOOLKIT_EMAIL', '')
+    if email and not validate_email(email):
+        raise ValueError(
+            f"Invalid email format in REFERENCETOOLKIT_EMAIL environment variable: {email}. "
+            "Please use a valid email address (e.g., user@example.com)"
+        )
+    return email
+
+
 @dataclass
 class Config:
     """Configuration container for the Reference Toolkit.
 
-    All settings can be overridden via CLI arguments.
+    All settings can be overridden via CLI arguments or environment variables.
+
+    Environment Variables:
+        REFERENCETOOLKIT_EMAIL: Default email address for API requests
     """
 
     # API credentials (REQUIRED for polite API usage)
-    email: str = "benzoic@gmail.com"
+    # Can be set via environment variable REFERENCETOOLKIT_EMAIL
+    email: str = field(default_factory=get_default_email)
+
+    def __post_init__(self):
+        """Validate configuration after initialization.
+
+        Raises:
+            ValueError: If email is missing or invalid
+        """
+        if not self.email:
+            raise ValueError(
+                "Email address is required for API usage. "
+                "Please provide it via:\n"
+                "  1. --mailto argument (recommended)\n"
+                "  2. REFERENCETOOLKIT_EMAIL environment variable\n"
+                "Example: export REFERENCETOOLKIT_EMAIL=your-email@example.com"
+            )
+        if not validate_email(self.email):
+            raise ValueError(
+                f"Invalid email address format: {self.email}. "
+                "Please use a valid email address (e.g., user@example.com)"
+            )
 
     # Throttling settings (seconds between API calls)
     sleep_crossref: float = 0.5

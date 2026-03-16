@@ -16,6 +16,75 @@ Complete guide for installing and running the Reference Toolkit on your operatin
 
 ---
 
+## ⚙️ Configuration
+
+### Required: Email Address
+
+The Reference Toolkit requires an email address for API usage. Most academic APIs (Crossref, PubMed, etc.) require this for polite usage and rate limiting.
+
+**Methods to provide email:**
+
+1. **CLI Argument** (Recommended for one-time use):
+```bash
+# Any platform
+reftool search "query" --mailto your-email@example.com
+
+# Docker
+docker run --rm -v $(PWD):/data reference-toolkit:latest reftool search "query" --mailto your-email@example.com
+```
+
+2. **Environment Variable** (Recommended for regular use):
+```bash
+# Linux/macOS
+export REFERENCETOOLKIT_EMAIL=your-email@example.com
+reftool search "query"
+
+# Windows PowerShell
+$env:REFERENCETOOLKIT_EMAIL="your-email@example.com"
+reftool search "query"
+
+# Windows Command Prompt
+set REFERENCETOOLKIT_EMAIL=your-email@example.com
+reftool search "query"
+```
+
+3. **Configuration File** (.env):
+```bash
+# Copy example file
+cp .env.example .env
+
+# Edit .env and add your email
+# REFERENCETOOLKIT_EMAIL=your-email@example.com
+
+# Load environment variables
+source .env  # Linux/macOS
+# Or use a tool like python-dotenv
+```
+
+### Optional Configuration
+
+**Proxy Settings** (for institutional access):
+```bash
+# Environment variables
+export UNPAYWALL_PROXY_URL=http://proxy.institution.edu:8080
+export UNPAYWALL_PROXY_USERNAME=your-username
+export UNPAYWALL_PROXY_PASSWORD=your-password
+```
+
+**Rate Limiting**:
+```bash
+# Adjust API call timing (default: 0.5 seconds)
+export REFERENCETOOLKIT_SLEEP_TIME=1.0
+```
+
+**Timeout Settings**:
+```bash
+# Adjust request timeout (default: 30 seconds)
+export REFERENCETOOLKIT_TIMEOUT=60
+```
+
+---
+
 ## 🪟 Windows Installation
 
 ### Method 1: Docker (Recommended)

@@ -8,3 +8,6 @@ scholarly>=1.7.0
 # Additional dependencies used by the toolkit
 PyPDF2>=3.0.0
 lxml>=4.9.0
+
+# Environment configuration
+python-dotenv>=1.0.0
