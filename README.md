@@ -1,10 +1,5 @@
 # Reference Toolkit
 
-[  
-[  
-[  
-[
-
 A command‑line toolkit for discovering, validating, resolving, and downloading academic references, with batch PDF renaming and export workflows tailored for researchers and systematic reviews.
 
 > If you use this toolkit in your research, please see the **Citation** section below.
