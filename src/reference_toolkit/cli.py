@@ -23,6 +23,7 @@ from reference_toolkit.search import SearchEngine, SearchResult
 from reference_toolkit.crossref import CrossrefClient
 from reference_toolkit.unpaywall import UnpaywallClient
 from reference_toolkit.doi_resolver import DOIResolver
+from reference_toolkit.doi_validator import DOIValidator, DOIStatus
 from reference_toolkit.pdf_downloader import PDFDownloader
 from reference_toolkit.exporter import CSVExporter, BibTeXExporter, JSONExporter
 from reference_toolkit.author_contact import AuthorContactExtractor
@@ -194,6 +195,149 @@ def cmd_resolve(args: argparse.Namespace) -> int:
     logger.info(f"Low confidence: {stats['low_confidence']}")
     logger.info(f"Time: {elapsed}")
     logger.info("=" * 60)
+
+    return 0
+
+
+# =============================================================================
+# VALIDATE COMMAND
+# =============================================================================
+
+def cmd_validate(args: argparse.Namespace) -> int:
+    """Validate DOIs from a file or DOI list."""
+    config = Config(
+        email=args.mailto,
+        validation_confidence_threshold=args.confidence,
+    )
+
+    setup_logging(verbose=args.verbose, log_file=Path("validate.log"))
+
+    logger.info("=" * 60)
+    logger.info("DOI Validation")
+    logger.info(f"Input: {args.input}")
+    logger.info("=" * 60)
+
+    validator = DOIValidator(config)
+
+    # Read DOIs from file
+    input_path = Path(args.input)
+    if not input_path.exists():
+        logger.error(f"Input file not found: {input_path}")
+        return 1
+
+    # Extract DOIs from file
+    dois = []
+    content = input_path.read_text(encoding='utf-8')
+
+    # Try to extract DOIs from file
+    import re
+    doi_pattern = re.compile(r'10\.\d{4,}/[^\s\]\'">\}]+')
+
+    if input_path.suffix == '.txt':
+        # Assume plain DOI list
+        dois = [line.strip() for line in content.split('\n') if line.strip()]
+    elif input_path.suffix in ['.bib', '.ris', '.md']:
+        # Extract DOIs from content
+        dois = doi_pattern.findall(content)
+    else:
+        # Try to extract DOIs from any format
+        dois = doi_pattern.findall(content)
+
+    logger.info(f"Found {len(dois)} DOIs to validate")
+
+    # Validate DOIs
+    results = validator.validate_doi_batch(dois)
+
+    # Generate summary
+    valid = sum(1 for r in results if r.status == DOIStatus.VALID)
+    not_found = sum(1 for r in results if r.status == DOIStatus.NOT_FOUND)
+    excluded = sum(1 for r in results if r.status == DOIStatus.EXCLUDED)
+    errors = sum(1 for r in results if r.status in [DOIStatus.ERROR, DOIStatus.TIMEOUT])
+
+    logger.info("=" * 60)
+    logger.info("Validation Summary")
+    logger.info(f"Total DOIs: {len(results)}")
+    logger.info(f"Valid: {valid} ({100*valid/len(results):.1f}%)")
+    logger.info(f"Not found: {not_found} ({100*not_found/len(results):.1f}%)")
+    logger.info(f"Excluded: {excluded} ({100*excluded/len(results):.1f}%)")
+    logger.info(f"Errors: {errors} ({100*errors/len(results):.1f}%)")
+    logger.info("=" * 60)
+
+    # Save detailed report
+    if args.report:
+        report_file = Path(args.report)
+        with report_file.open('w', encoding='utf-8') as f:
+            f.write("DOI VALIDATION REPORT\n")
+            f.write("=" * 80 + "\n\n")
+
+            for result in results:
+                f.write(f"DOI: {result.doi}\n")
+                f.write(f"Status: {result.status.value}\n")
+
+                if result.status == DOIStatus.VALID:
+                    f.write(f"Title: {result.title}\n")
+                    f.write(f"Journal: {result.journal}\n")
+                    f.write(f"Year: {result.year}\n")
+                elif result.status == DOIStatus.EXCLUDED:
+                    f.write(f"Reason: {result.excluded_reason}\n")
+                else:
+                    f.write(f"Message: {result.message}\n")
+
+                f.write("\n" + "-" * 80 + "\n\n")
+
+        logger.info(f"Detailed report saved to: {report_file}")
+
+    return 0 if not_found == 0 else 1
+
+
+# =============================================================================
+# CORRECT COMMAND
+# =============================================================================
+
+def cmd_correct(args: argparse.Namespace) -> int:
+    """Correct DOIs in a reference file."""
+    config = Config(
+        email=args.mailto,
+        validation_confidence_threshold=args.confidence,
+        safe_correction_mode=not args.unsafe_mode,
+    )
+
+    setup_logging(verbose=args.verbose, log_file=Path("correct.log"))
+
+    logger.info("=" * 60)
+    logger.info("DOI Correction")
+    logger.info(f"Input: {args.input}")
+    logger.info(f"Output: {args.output}")
+    logger.info(f"Confidence threshold: {args.confidence}")
+    logger.info(f"Safe mode: {not args.unsafe_mode}")
+    logger.info("=" * 60)
+
+    validator = DOIValidator(config)
+
+    # Correct DOIs in file
+    corrections = validator.correct_references_file(
+        input_file=Path(args.input),
+        output_file=Path(args.output),
+        confidence_threshold=args.confidence,
+        safe_mode=not args.unsafe_mode
+    )
+
+    if not corrections:
+        logger.info("No corrections needed")
+        return 0
+
+    # Generate report
+    report_file = Path(args.report) if args.report else None
+    report = validator.generate_discrepancy_report(corrections, report_file)
+
+    logger.info("\n" + report)
+
+    # Save corrections summary
+    logger.info(f"\n✅ Applied {len(corrections)} corrections")
+    logger.info(f"📁 Corrected file saved to: {args.output}")
+
+    if report_file:
+        logger.info(f"📄 Report saved to: {report_file}")
 
     return 0
 
@@ -516,6 +660,34 @@ def main() -> int:
     resolve_p.add_argument("--max-results", type=int, default=1)
     resolve_p.add_argument("-v", "--verbose", action="store_true")
     resolve_p.set_defaults(func=cmd_resolve)
+
+    # --- Validate command ---
+    validate_p = subparsers.add_parser(
+        "validate",
+        help="Validate DOIs from a file or DOI list",
+        aliases=["check-dois"],
+    )
+    validate_p.add_argument("input", help="Input file (DOI list, bib, ris, md)")
+    validate_p.add_argument("--mailto", help="Email address for API requests (required for polite usage)")
+    validate_p.add_argument("--confidence", type=float, default=80.0, help="Confidence threshold for validation (default: 80.0)")
+    validate_p.add_argument("--report", help="Save detailed report to file")
+    validate_p.add_argument("-v", "--verbose", action="store_true")
+    validate_p.set_defaults(func=cmd_validate)
+
+    # --- Correct command ---
+    correct_p = subparsers.add_parser(
+        "correct",
+        help="Correct DOIs in a reference file",
+        aliases=["fix-dois"],
+    )
+    correct_p.add_argument("input", help="Input reference file (txt, bib, ris, md)")
+    correct_p.add_argument("-o", "--output", required=True, help="Output file for corrected references")
+    correct_p.add_argument("--mailto", help="Email address for API requests (required for polite usage)")
+    correct_p.add_argument("--confidence", type=float, default=80.0, help="Confidence threshold for corrections (default: 80.0)")
+    correct_p.add_argument("--unsafe-mode", action="store_true", help="Apply medium/low confidence corrections (not recommended)")
+    correct_p.add_argument("--report", help="Save correction report to file")
+    correct_p.add_argument("-v", "--verbose", action="store_true")
+    correct_p.set_defaults(func=cmd_correct)
 
     # --- Download command ---
     download_p = subparsers.add_parser(

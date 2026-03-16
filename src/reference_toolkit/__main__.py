@@ -27,7 +27,7 @@ def main():
     # Step 1 subcommand
     resolve_parser = parser.add_parser(
         "resolve",
-        help="Resolve references to DOIs using Crossref"
+        help="Resolve references to DOIs using Crossref",
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     resolve_parser.add_argument(

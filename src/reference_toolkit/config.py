@@ -110,6 +110,13 @@ class Config:
     confidence_threshold: float = 60.0
     max_candidates: int = 5  # Show top N matches for review
 
+    # DOI validation settings
+    validation_confidence_threshold: float = 80.0  # Higher threshold for DOI correction
+    safe_correction_mode: bool = True  # Only apply high-confidence corrections
+    exclude_annotation_dois: bool = True  # Exclude annotation DOIs from corrections
+    exclude_masthead_dois: bool = True  # Exclude masthead DOIs from corrections
+    validation_report_file: Path = field(default_factory=lambda: Path("doi_validation_report.txt"))
+
     # Search settings
     search_limit: int = 50  # Max results per search
     search_year_start: Optional[int] = None
@@ -140,6 +147,18 @@ class Config:
     @property
     def user_agent(self) -> str:
         return f"Reference-Toolkit/2.0 (mailto:{self.email})"
+
+    def get(self, key: str, default=None):
+        """Get config value by key with default fallback.
+
+        Args:
+            key: Configuration key name
+            default: Default value if key not found
+
+        Returns:
+            Configuration value or default
+        """
+        return getattr(self, key, default)
 
 
 class Columns:
