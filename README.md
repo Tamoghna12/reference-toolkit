@@ -364,15 +364,13 @@ Key Python dependencies include:
 - `scholarly` – Google Scholar access  
 - `PyPDF2` – PDF metadata extraction  
 
-(Keep this list synced with your actual `pyproject.toml` / `requirements.txt`.)
-
 ***
 
 ## 14. Citation and license
 
 If this toolkit contributes to your work, please cite it (example):
 
-> Your Name, *Reference Toolkit* (Version X.Y.Z), Year.  
-> DOI: `10.5281/zenodo.xxxxxxx`
+> Tamoghna Das, *Reference Toolkit* (Version 1.0.0), 2026.  
+> DOI: `[![DOI](https://zenodo.org/badge/1182694882.svg)](https://doi.org/10.5281/zenodo.19051489)`
 
 - **License:** MIT – see [LICENSE](LICENSE) for details.  
