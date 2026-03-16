@@ -1,11 +1,12 @@
 """Configuration settings for the Reference Toolkit."""
 
 import os
-import re
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 from typing import Optional
+
+from reference_toolkit.security import validate_email
 
 
 class OutputFormat(Enum):
@@ -23,21 +24,6 @@ class SearchSource(Enum):
     PUBMED = "pubmed"
     CROSSREF = "crossref"
     ALL = "all"
-
-
-def validate_email(email: str) -> bool:
-    """Validate email address format.
-
-    Args:
-        email: Email address to validate
-
-    Returns:
-        True if email format is valid, False otherwise
-    """
-    if not email:
-        return False
-    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    return re.match(pattern, email) is not None
 
 
 def get_default_email() -> str:

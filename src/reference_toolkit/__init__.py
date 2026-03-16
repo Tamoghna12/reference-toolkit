@@ -21,6 +21,7 @@ from .unpaywall import UnpaywallClient, UnpaywallResult
 from .doi_resolver import DOIResolver
 from .pdf_downloader import PDFDownloader
 from .exporter import BibTeXExporter, CSVExporter, JSONExporter
+from . import security
 
 __all__ = [
     # Config

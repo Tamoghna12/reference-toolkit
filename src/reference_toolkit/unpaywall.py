@@ -9,6 +9,7 @@ from pathlib import Path
 import requests
 
 from reference_toolkit.config import Config
+from reference_toolkit.security import validate_proxy_url
 
 logger = logging.getLogger(__name__)
 
@@ -42,18 +43,29 @@ class UnpaywallClient:
 
         # Configure proxy if specified
         if config.proxy_url:
+            # Validate proxy URL before using
+            is_valid, error_msg = validate_proxy_url(config.proxy_url)
+            if not is_valid:
+                raise ValueError(f"Invalid proxy configuration: {error_msg}")
+
             proxies = {"http": config.proxy_url, "https": config.proxy_url}
-            self.session.proxies.update(proxies)
 
             # Add proxy authentication if provided
             if config.proxy_username and config.proxy_password:
-                # requests handles proxy auth via URL
+                # Validate credentials exist and are not empty
+                if not config.proxy_username or not config.proxy_password:
+                    raise ValueError("Proxy username and password must both be provided")
+
+                # Construct authenticated proxy URL securely
                 from urllib.parse import urlparse
                 parsed = urlparse(config.proxy_url)
                 proxy_with_auth = f"{parsed.scheme}://{config.proxy_username}:{config.proxy_password}@{parsed.netloc}{parsed.path}"
                 proxies = {"http": proxy_with_auth, "https": proxy_with_auth}
-                self.session.proxies.update(proxies)
 
+                # Log warning about credentials in URL
+                logger.warning("Proxy credentials in URL - consider using environment variables for better security")
+
+            self.session.proxies.update(proxies)
             logger.info(f"Using proxy: {config.proxy_url}")
 
     def _make_request(self, doi: str) -> dict | None:
