@@ -371,6 +371,6 @@ Key Python dependencies include:
 If this toolkit contributes to your work, please cite it (example):
 
 > Tamoghna Das, *Reference Toolkit* (Version 1.0.0), 2026.  
-> DOI: `[![DOI](https://zenodo.org/badge/1182694882.svg)](https://doi.org/10.5281/zenodo.19051489)`
+> DOI: `10.5281/zenodo.19051489`
 
 - **License:** MIT – see [LICENSE](LICENSE) for details.  
