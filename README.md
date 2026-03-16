@@ -1,55 +1,86 @@
 # Reference Toolkit
 
-[![Python](https://img.shields.io/badge/Python-3.10+-blue)](https://www.python.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Light-purple)](https://github.com/Tamoghna12/reference-toolkit)
-[![Docker](https://img.shields.io/badge/docker-supported-blue)](https://www.docker.com/)
+[  
+[  
+[  
+[
 
-A comprehensive tool for discovering, validating, resolving, and downloading academic papers with PDF batch renaming capabilities.
+A command‑line toolkit for discovering, validating, resolving, and downloading academic references, with batch PDF renaming and export workflows tailored for researchers and systematic reviews.
 
-## Features
+> If you use this toolkit in your research, please see the **Citation** section below.
 
-| Feature | Description |
-|---------|-------------|
-| **Search** | Find papers via Google Scholar, PubMed, Crossref |
-| **Parse** | Import EndNote, Mendeley, BibTeX, RIS exports |
-| **Resolve** | Match citations to DOIs via Crossref |
-| **Validate** | Detect fake/incomplete references |
-| **Download** | Get open-access PDFs via Unpaywall |
-| **Export** | Output to BibTeX, CSV, JSON |
+***
 
-## Installation
+## 1. Overview
 
-### Quick Start (5 minutes)
-👉 **[Quick Start Reference](QUICK_START.md)** - Get up and running fast
+**Reference Toolkit** automates the end‑to‑end workflow around reference lists and PDFs:
 
-### Platform-Specific Guides
-👉 **[Full Installation Guide](INSTALL_GUIDE.md)** - Detailed instructions for:
-- **Windows** - Docker and native Python installation
-- **macOS** - Docker and native Python installation
-- **Linux** - Docker and native Python installation
+- Searches multiple scholarly sources (Google Scholar, PubMed, Crossref, Semantic Scholar).  
+- Parses exports from common reference managers (EndNote, Mendeley, BibTeX, RIS).  
+- Resolves citations to DOIs and flags suspicious or incomplete references.  
+- Downloads open‑access PDFs and renames them with human‑readable filenames.  
+- Exports clean bibliographies to BibTeX, CSV, and JSON for downstream tools.
 
-### Quick Install
+**Who is this for?**
 
-**From PyPI** (when available):
+- Researchers running literature reviews or meta‑analyses.  
+- Students and supervisors managing large reference libraries.  
+- Labs that want reproducible, scriptable reference management and validation.
+
+***
+
+## 2. Features at a glance
+
+| Feature         | Description                                                 |
+|----------------|-------------------------------------------------------------|
+| **Search**     | Query Google Scholar, PubMed, Crossref                      |
+| **Parse**      | Import EndNote, Mendeley, BibTeX, RIS exports               |
+| **Resolve**    | Match citations to DOIs via Crossref                        |
+| **Validate**   | Detect fake, low‑confidence, or incomplete references       |
+| **Download**   | Retrieve open‑access PDFs via Unpaywall / Semantic Scholar  |
+| **Export**     | Output to BibTeX, CSV, JSON                                 |
+| **Rename**     | Batch rename PDFs as `{Author}_{Year}_{Title}.pdf`          |
+| **Contacts**   | Extract corresponding author emails and draft requests      |
+
+(You can leave out rows if you prefer a shorter table.)
+
+***
+
+## 3. Installation
+
+### Quick start
+
+For a fast setup, see:
+
+- **[Quick Start](QUICK_START.md)** – minimal commands and first workflow  
+- **[Installation Guide](INSTALL_GUIDE.md)** – platform‑specific details for Windows, macOS, and Linux  
+
+### Install from PyPI (when available)
+
 ```bash
 pip install reference-toolkit
 ```
 
-**From source**:
+### Install from source
+
 ```bash
 git clone https://github.com/Tamoghna12/reference-toolkit.git
 cd reference-toolkit
 pip install -e .
 ```
 
-**Docker** (recommended for consistency):
+### Docker (recommended for consistency)
+
 ```bash
 docker build -t reference-toolkit:latest .
 docker run --rm -v $(PWD):/data reference-toolkit:latest reftool --help
 ```
 
-## Quick Start
+***
+
+## 4. Quick start examples
+
+The `reftool` CLI provides subcommands for common tasks.
 
 ```bash
 # Search for papers
@@ -61,170 +92,160 @@ reftool resolve refs.txt
 # Download open-access PDFs
 reftool download resolved_refs.csv
 
-# Full pipeline (resolve + download + BibTeX export)
+# Full pipeline: resolve + download + BibTeX export
 reftool pipeline refs.bib --bibtex
 ```
 
-## Commands
+***
 
-### `search` - Find Papers
+## 5. Core commands
+
+### 5.1 `search` – find papers
 
 ```bash
 reftool search "CRISPR gene editing" \
-    --source pubmed \
-    --year-start 2020 \
-    --year-end 2024 \
-    --limit 50 \
-    --output results.csv
+  --source pubmed \
+  --year-start 2020 \
+  --year-end 2024 \
+  --limit 50 \
+  --output results.csv
 ```
 
-Options:
-- `--source`: `all` (default), `scholar`, `pubmed`, `crossref`
-- `--format`: `csv` (default), `bibtex`, `json`
-- `--year-start` / `--year-end`: Filter by publication year
-- `--limit`: Max results per source
+Key options:
 
-### `resolve` - Match Citations to DOIs
+- `--source`: `all` (default), `scholar`, `pubmed`, `crossref`  
+- `--format`: `csv` (default), `bibtex`, `json`  
+- `--year-start`, `--year-end`: filter by publication year  
+- `--limit`: max results per source  
+
+### 5.2 `resolve` – match citations to DOIs
 
 ```bash
 reftool resolve refs.txt \
-    --output resolved.csv \
-    --confidence 60 \
-    --max-results 3
+  --output resolved.csv \
+  --confidence 60 \
+  --max-results 3
 ```
 
-Accepts: `.txt` (EndNote/Mendeley), `.bib`, `.ris`
+Accepted input: `.txt` (EndNote/Mendeley style), `.bib`, `.ris`
 
 Options:
-- `--confidence`: Score threshold (default: 60)
-- `--resume`: Skip already-processed refs
-- `--max-results`: Show top N matches for review
 
-### `download` - Get Open-Access PDFs
+- `--confidence`: score threshold (default: 60)  
+- `--resume`: skip already‑processed references  
+- `--max-results`: show top N matches for manual review  
+
+### 5.3 `download` – get open‑access PDFs
 
 ```bash
 reftool download resolved.csv \
-    --download-dir pdfs/ \
-    --resume
+  --download-dir pdfs/ \
+  --resume
 ```
 
 Options:
-- `--resume`: Skip existing PDFs
-- `--no-update`: Don't modify input CSV
 
-### `pipeline` - Full Workflow
+- `--resume`: skip existing PDFs  
+- `--no-update`: do not modify the input CSV  
+
+### 5.4 `pipeline` – end‑to‑end workflow
 
 ```bash
 reftool pipeline refs.txt \
-    --output-csv resolved.csv \
-    --download-dir pdfs/ \
-    --bibtex \
-    --mailto your@email.com
+  --output-csv resolved.csv \
+  --download-dir pdfs/ \
+  --bibtex \
+  --mailto your@email.com
 ```
 
-Runs: parse → resolve → download → export
+Runs: parse → resolve → download → export.
 
-### `convert` - Format Conversion
+### 5.5 `convert` – format conversion
 
 ```bash
 reftool convert refs.txt --output refs.bib --format bibtex
 reftool convert refs.bib --output refs.csv --format csv
 ```
 
-### `contacts` - Author Contact Extraction
+### 5.6 `contacts` – author contact extraction
 
 ```bash
 reftool contacts resolved_refs.csv -o author_requests.txt
 ```
 
-Extracts corresponding author emails and generates request emails for papers you couldn't download.
+Extracts corresponding author emails and generates request templates for inaccessible papers.
 
-### `rename` - Batch Rename PDF Files
+### 5.7 `rename` – batch PDF renaming
 
 ```bash
-# Rename PDFs in a folder based on their metadata
+# Rename PDFs in-place based on metadata
 reftool rename pdfs_to_rename/
 
-# Preview what would be renamed (dry run)
+# Preview changes without renaming
 reftool rename pdfs_to_rename/ --dry-run
 
-# Copy renamed files to new directory (keeps originals)
+# Copy renamed files to a new directory
 reftool rename pdfs/ --output-dir renamed_pdfs/
 ```
 
-Extracts metadata (title, authors, year) from PDF files and renames them with human-readable filenames in the format: `{Author}_{Year}_{Title}.pdf`
+Filenames follow: `{Author}_{Year}_{Title}.pdf`.
 
-## Enhanced Features
+***
 
-- **Semantic Scholar Integration**: Finds PDFs missed by Unpaywall
-- **PDF Quality Validation**: Checks for corrupted, encrypted, or scanned PDFs
-- **Smart Rate Limiting**: Respects API quotas with exponential backoff
-- **Title-Based Filenames**: PDFs named as `{Author}_{Year}_{Title}.pdf`
-- **Preprint Search**: Searches arXiv, bioRxiv, medRxiv, PMC for OA versions
+## 6. Inputs, outputs, and columns
 
-## Input Formats
+### Input formats
 
-| Format | Extension | Auto-detected |
-|--------|-----------|---------------|
-| EndNote plain text | `.txt` | ✅ |
-| Mendeley plain text | `.txt` | ✅ |
-| BibTeX | `.bib` | ✅ |
-| RIS | `.ris` | ✅ |
-| DOI list | `.txt` | ✅ |
+| Format              | Extension | Auto-detected |
+|---------------------|-----------|---------------|
+| EndNote plain text  | `.txt`    | ✅             |
+| Mendeley plain text | `.txt`    | ✅             |
+| BibTeX              | `.bib`    | ✅             |
+| RIS                 | `.ris`    | ✅             |
+| DOI list            | `.txt`    | ✅             |
 
-## Output Files
+### Output files
 
-| File | Description |
-|------|-------------|
-| `resolved_refs.csv` | Main output with DOIs and metadata |
-| `unresolved_refs.csv` | References without matches |
-| `low_confidence_refs.csv` | Suspicious matches (check manually) |
-| `pdfs/` | Downloaded open-access PDFs |
-| `*.log` | Detailed operation logs |
+| File                  | Description                          |
+|-----------------------|--------------------------------------|
+| `resolved_refs.csv`   | Main output with DOIs + metadata     |
+| `unresolved_refs.csv` | References without matches           |
+| `low_confidence_refs.csv` | Suspicious matches to review    |
+| `pdfs/`               | Downloaded open‑access PDFs          |
+| `*.log`               | Detailed operation logs              |
 
-## CSV Columns
+### CSV columns
 
-| Column | Description |
-|--------|-------------|
-| `raw_citation` | Original reference text |
-| `title` | Resolved title |
-| `doi` | Digital Object Identifier |
-| `authors` | Author list |
-| `year` | Publication year |
-| `journal` | Journal/conference name |
-| `crossref_score` | Match confidence score |
-| `confidence_flag` | `ok` or `low` |
-| `pdf_downloaded` | `yes`, `no`, or `failed` |
-| `oa_status` | `gold`, `green`, `hybrid`, `closed` |
+| Column            | Description                                  |
+|-------------------|----------------------------------------------|
+| `raw_citation`    | Original reference text                      |
+| `title`           | Resolved title                               |
+| `doi`             | Digital Object Identifier                    |
+| `authors`         | Author list                                  |
+| `year`            | Publication year                             |
+| `journal`         | Journal or conference name                   |
+| `crossref_score`  | Match confidence score                       |
+| `confidence_flag` | `ok` or `low`                                |
+| `pdf_downloaded`  | `yes`, `no`, or `failed`                     |
+| `oa_status`       | `gold`, `green`, `hybrid`, or `closed`       |
 
-## Validation Workflow
+***
 
-Use the tool to validate references:
+## 7. Typical workflows
 
-```bash
-# Check if references are real
-reftool resolve refs.txt --confidence 60
-
-# Review low-confidence matches
-cat low_confidence_refs.csv
-
-# High score (>60) = likely valid
-# Low score (<60) = check manually
-# No match = possibly fake
-```
-
-## Typical Workflows
-
-### Literature Review
+### 7.1 Literature review
 
 ```bash
 # 1. Search for papers
-reftool search "CRISPR therapeutic" --source pubmed --limit 100 --output search.csv
+reftool search "CRISPR therapeutic" \
+  --source pubmed \
+  --limit 100 \
+  --output search.csv
 
-# 2. Add your existing references
+# 2. Combine with existing references
 cat my_refs.txt >> all_refs.txt
 
-# 3. Resolve all to DOIs
+# 3. Resolve all references to DOIs
 reftool resolve all_refs.txt --output final_refs.csv
 
 # 4. Download available PDFs
@@ -234,65 +255,66 @@ reftool download final_refs.csv --download-dir pdfs/
 reftool convert final_refs.csv --output references.bib --format bibtex
 ```
 
-### Reference Validation
+### 7.2 Reference validation
 
 ```bash
 # Check a list of references for validity
 reftool resolve refs.txt --max-results 3
 
-# Check low-confidence matches
+# Inspect low-confidence matches
 cat low_confidence_refs.csv
 
-# Scores:
-#   >80: Very likely correct
-#   60-80: Probably correct
-#   <60: Check manually
-#   No match: Possibly fake/incorrect
+# Rough interpretation:
+#   >80: very likely correct
+#   60–80: probably correct
+#   <60: check manually
+#   no match: possibly fake/incorrect
 ```
 
-### Mendeley/EndNote Export
+***
 
-```bash
-# Export from Mendeley as BibTeX, then:
-reftool resolve library.bib --bibtex
+## 8. API etiquette and ethics
 
-# Export from EndNote as text, then:
-reftool pipeline exported_refs.txt
-```
+Reference Toolkit is designed to respect API usage policies:
 
-## API Etiquette
+- Requires `--mailto` email for some APIs.  
+- Applies rate limiting and exponential backoff for HTTP 429.  
+- Only retrieves open‑access PDFs (no paywall circumvention).  
 
-This tool respects API usage policies:
+Please be considerate when running large batch queries.
 
-- Requires `--mailto` email for API access
-- Rate limiting between requests
-- Handles 429 responses with backoff
-- Only retrieves open-access PDFs (no paywall bypass)
+***
 
-## Importing into EndNote/Mendeley
+## 9. Reference managers: EndNote / Mendeley
 
-1. **EndNote**: File → Import → Folder... → Select `pdfs/` → Import Option: PDF
-2. **Mendeley**: File → Add Files... → Select `pdfs/` folder
+You can import downloaded PDFs into your reference manager:
 
-## Documentation
+- **EndNote**: `File → Import → Folder…` → select `pdfs/` → Import Option: `PDF`.  
+- **Mendeley**: `File → Add Files…` → select the `pdfs/` folder.  
 
-### Installation & Setup
-- **[Quick Start](QUICK_START.md)** - Get up and running in 5 minutes
-- **[Installation Guide](INSTALL_GUIDE.md)** - Detailed platform-specific instructions
-- **[Docker Usage](docs/DOCKER_USAGE.md)** - Docker quick reference
+***
 
-### Feature Guides
-- **[PDF Renaming Guide](docs/PDF_RENAMING_GUIDE.md)** - How to use the `rename` command
-- **[Enhanced Features](docs/ENHANCED_ACCESS_FEATURES.md)** - Advanced PDF access features
-- **[Future Enhancements](docs/FUTURE_ENHANCEMENTS.md)** - Planned improvements
+## 10. Documentation
 
-### Development
-- **[Contributing](CONTRIBUTING.md)** - How to contribute
-- **[Changelog](CHANGELOG.md)** - Version history
+- **Installation & setup**  
+  - [Quick Start](QUICK_START.md)  
+  - [Installation Guide](INSTALL_GUIDE.md)  
+  - [Docker Usage](docs/DOCKER_USAGE.md)  
 
-## Project Structure
+- **Feature guides**  
+  - [PDF Renaming Guide](docs/PDF_RENAMING_GUIDE.md)  
+  - [Enhanced Features](docs/ENHANCED_ACCESS_FEATURES.md)  
+  - [Future Enhancements](docs/FUTURE_ENHANCEMENTS.md)  
 
-```
+- **Development**  
+  - [Contributing](CONTRIBUTING.md)  
+  - [Changelog](CHANGELOG.md)  
+
+***
+
+## 11. Project structure
+
+```text
 reference-toolkit/
 ├── src/reference_toolkit/    # Source code
 ├── tests/                    # Test suite
@@ -300,13 +322,15 @@ reference-toolkit/
 ├── docs/                     # Documentation
 ├── .github/workflows/        # CI/CD
 ├── Dockerfile                # Docker configuration
-├── pyproject.toml           # Project configuration
-└── requirements.txt         # Python dependencies
+├── pyproject.toml            # Project configuration
+└── requirements.txt          # Python dependencies
 ```
 
-## Development
+***
 
-### Running Tests
+## 12. Development
+
+### Running tests
 
 ```bash
 # Install development dependencies
@@ -319,7 +343,7 @@ pytest
 pytest --cov=src/reference_toolkit
 ```
 
-### Code Style
+### Code style
 
 ```bash
 # Format code
@@ -332,15 +356,28 @@ isort src/ tests/
 flake8 src/ tests/
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed development guidelines.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
 
-## Dependencies
+***
 
-- `requests` - HTTP requests
-- `bibtexparser` - BibTeX parsing
-- `scholarly` - Google Scholar access
-- `PyPDF2` - PDF metadata extraction
+## 13. Dependencies
 
-## License
+Key Python dependencies include:
 
-MIT License - see [LICENSE](LICENSE) file
+- `requests` – HTTP requests  
+- `bibtexparser` – BibTeX parsing  
+- `scholarly` – Google Scholar access  
+- `PyPDF2` – PDF metadata extraction  
+
+(Keep this list synced with your actual `pyproject.toml` / `requirements.txt`.)
+
+***
+
+## 14. Citation and license
+
+If this toolkit contributes to your work, please cite it (example):
+
+> Your Name, *Reference Toolkit* (Version X.Y.Z), Year.  
+> DOI: `10.5281/zenodo.xxxxxxx`
+
+- **License:** MIT – see [LICENSE](LICENSE) for details.  
